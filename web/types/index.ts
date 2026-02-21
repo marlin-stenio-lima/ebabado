@@ -15,6 +15,7 @@ export type Product = {
     image_url: string | null;
     active: boolean;
     stock: number;
+    categories?: Category | null;
     created_at?: string;
 };
 
