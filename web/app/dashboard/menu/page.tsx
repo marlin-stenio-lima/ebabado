@@ -9,7 +9,7 @@ import { Copy, Download, ExternalLink, QrCode as QrIcon } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import Link from "next/link";
 import { productService } from "@/lib/services/product-service";
-import { Product, Category } from "@/types";
+import { Product, Category } from "../../../types";
 
 export default function MenuSettingsPage() {
     const [products, setProducts] = useState<Product[]>([]);

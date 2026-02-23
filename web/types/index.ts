@@ -1,12 +1,11 @@
-
-export type Category = {
+export interface Category {
     id: string;
     name: string;
     icon: string | null;
     created_at?: string;
-};
+}
 
-export type Product = {
+export interface Product {
     id: string;
     category_id: string | null;
     name: string;
@@ -17,11 +16,11 @@ export type Product = {
     stock: number;
     created_at?: string;
     categories?: Category | null;
-};
+}
 
 export type ProductWithCategory = Product;
 
-export type CartItem = {
+export interface CartItem {
     product: Product;
     quantity: number;
-};
+}

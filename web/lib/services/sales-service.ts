@@ -1,7 +1,7 @@
 import { createClient } from "../supabase/client";
 
 const supabase = createClient();
-import { CartItem } from "@/types";
+import { CartItem } from "../../types";
 
 export type Sale = {
     id: string;

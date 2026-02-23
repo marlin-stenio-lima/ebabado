@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { productService } from "@/lib/services/product-service";
-import { Product, Category } from "@/types";
+import { Product, Category } from "../../../types";
 
 export default function ProductsPage() {
     const [products, setProducts] = useState<Product[]>([]);

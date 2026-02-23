@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { productService } from "@/lib/services/product-service";
-import { Product, Category } from "@/types";
+import { Product, Category } from "../../types";
 import { Loader2, Search, MapPin, Clock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";

@@ -11,7 +11,7 @@ import { ChangeCalculator } from "@/components/change-calculator";
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { productService } from "@/lib/services/product-service";
 import { salesService } from "@/lib/services/sales-service"; // Import salesService
-import { Product, Category, CartItem } from "@/types";
+import { Product, Category, CartItem } from "../../types";
 
 type PaymentMethod = 'money' | 'credit' | 'debit' | 'pix' | null;
 
@@ -126,7 +126,12 @@ export default function PDVPage() {
 
             // 2. Create Sale Record
             if (paymentMethod) {
-                await salesService.createSale(cart, cartTotal, paymentMethod);
+                // Defensive mapping to ensure exact shape and bypass any internal type conflicts
+                const formattedCart: CartItem[] = cart.map(item => ({
+                    product: { ...item.product },
+                    quantity: item.quantity
+                }));
+                await salesService.createSale(formattedCart, cartTotal, paymentMethod as string);
             }
 
             console.log("Venda Finalizada e Registrada:", { cart, total: cartTotal, method: paymentMethod });
