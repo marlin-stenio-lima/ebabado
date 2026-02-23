@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard, ShoppingCart, Package, Settings, UtensilsCrossed, LogOut, Menu } from "lucide-react";
 import { useState } from "react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"; // Precisa instalar Sheet se não tiver, mas vou fazer responsivo simples primeiro ou usar mobile nav.
+
 
 const MENU_ITEMS = [
     { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
