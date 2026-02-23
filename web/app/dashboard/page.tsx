@@ -7,22 +7,30 @@ import { Button } from "@/components/ui/button";
 import { BarChart3, ShoppingCart, Users, DollarSign, TrendingUp, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { salesService, Sale } from "@/lib/services/sales-service";
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 
 export default function DashboardPage() {
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({ totalSales: 0, orderCount: 0, avgTicket: 0 });
+    const [performance, setPerformance] = useState<{ hour: string; total: number }[]>([]);
     const [recentSales, setRecentSales] = useState<Sale[]>([]);
+
+    useEffect(() => {
+        loadDashboardData();
+    }, []);
 
 
 
     async function loadDashboardData() {
         try {
-            const [statsData, salesData] = await Promise.all([
+            const [statsData, salesData, performanceData] = await Promise.all([
                 salesService.getDailyStats(),
-                salesService.getRecentSales(5)
+                salesService.getRecentSales(5),
+                salesService.getDailyPerformance()
             ]);
             setStats(statsData);
             setRecentSales(salesData);
+            setPerformance(performanceData);
         } catch (error) {
             console.error("Error loading dashboard:", error);
         } finally {
@@ -99,13 +107,39 @@ export default function DashboardPage() {
                     {/* Placeholder Chart - Can implement Recharts later if requested */}
                     <Card className="col-span-4 hover:shadow-md transition-shadow">
                         <CardHeader>
-                            <CardTitle>Desempenho de Vendas</CardTitle>
+                            <CardTitle>Desempenho de Vendas (Hoje)</CardTitle>
                         </CardHeader>
-                        <CardContent className="pl-2">
-                            <div className="h-[250px] flex flex-col items-center justify-center text-muted-foreground bg-gray-50 rounded-lg border border-dashed mx-4">
-                                <BarChart3 className="w-12 h-12 mb-2 opacity-20" />
-                                <p className="text-sm">Gráfico de desempenho será implementado na próxima fase.</p>
-                                <p className="text-xs opacity-70">Dados de vendas diárias já estão sendo coletados.</p>
+                        <CardContent>
+                            <div className="h-[300px] w-full pt-4">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={performance}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.3} />
+                                        <XAxis
+                                            dataKey="hour"
+                                            stroke="#888888"
+                                            fontSize={12}
+                                            tickLine={false}
+                                            axisLine={false}
+                                        />
+                                        <YAxis
+                                            stroke="#888888"
+                                            fontSize={12}
+                                            tickLine={false}
+                                            axisLine={false}
+                                            tickFormatter={(value) => `R$${value}`}
+                                        />
+                                        <Tooltip
+                                            contentStyle={{ backgroundColor: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0" }}
+                                            formatter={(value: any) => [`R$ ${value.toFixed(2)}`, "Vendas"]}
+                                        />
+                                        <Bar
+                                            dataKey="total"
+                                            fill="var(--primary)"
+                                            radius={[4, 4, 0, 0]}
+                                            maxBarSize={40}
+                                        />
+                                    </BarChart>
+                                </ResponsiveContainer>
                             </div>
                         </CardContent>
                     </Card>

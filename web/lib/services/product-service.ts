@@ -1,6 +1,6 @@
 
 import { createClient } from "@/lib/supabase/client";
-import { Product, Category } from "@/types";
+import { Product, Category, ProductWithCategory } from "@/types";
 
 const supabase = createClient();
 
@@ -12,7 +12,7 @@ export const productService = {
             .order("name");
 
         if (error) throw error;
-        return data as (Product & { categories: Category | null })[];
+        return data as ProductWithCategory[];
     },
 
     async getCategories() {

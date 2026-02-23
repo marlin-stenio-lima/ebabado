@@ -11,19 +11,12 @@ import { ChangeCalculator } from "@/components/change-calculator";
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { productService } from "@/lib/services/product-service";
 import { salesService } from "@/lib/services/sales-service"; // Import salesService
-import { Product, Category } from "@/types";
-
-type CartItem = {
-    productId: string;
-    name: string;
-    price: number;
-    quantity: number;
-};
+import { Product, Category, CartItem } from "@/types";
 
 type PaymentMethod = 'money' | 'credit' | 'debit' | 'pix' | null;
 
 export default function PDVPage() {
-    const [products, setProducts] = useState<(Product & { categories: Category | null })[]>([]);
+    const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -81,7 +74,7 @@ export default function PDVPage() {
 
         if (!isCartOpen) setIsCartOpen(true);
         setCart(prev => {
-            const existing = prev.find(item => item.productId === product.id);
+            const existing = prev.find(item => item.product.id === product.id);
 
             if (existing && existing.quantity >= product.stock) {
                 alert("Estoque insuficiente!");
@@ -90,19 +83,19 @@ export default function PDVPage() {
 
             if (existing) {
                 return prev.map(item =>
-                    item.productId === product.id
+                    item.product.id === product.id
                         ? { ...item, quantity: item.quantity + 1 }
                         : item
                 );
             }
-            return [...prev, { productId: product.id, name: product.name, price: product.price, quantity: 1 }];
+            return [...prev, { product, quantity: 1 }];
         });
     };
 
     const updateQuantity = (productId: string, delta: number) => {
         setCart(prev => {
             return prev.map(item => {
-                if (item.productId === productId) {
+                if (item.product.id === productId) {
                     const product = products.find(p => p.id === productId);
                     const newQty = item.quantity + delta;
 
@@ -119,7 +112,7 @@ export default function PDVPage() {
     };
 
     const clearCart = () => setCart([]);
-    const cartTotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    const cartTotal = cart.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
     const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
 
     const handleFinishSale = async () => {
@@ -128,7 +121,7 @@ export default function PDVPage() {
         try {
             // 1. Decrement Stock
             await Promise.all(cart.map(item =>
-                productService.decrementStock(item.productId, item.quantity)
+                productService.decrementStock(item.product.id, item.quantity)
             ));
 
             // 2. Create Sale Record
@@ -262,22 +255,22 @@ export default function PDVPage() {
                         </div>
                     ) : (
                         cart.map(item => (
-                            <div key={item.productId} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border">
+                            <div key={item.product.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border">
                                 <div className="flex flex-col">
-                                    <span className="font-medium text-sm">{item.name}</span>
-                                    <span className="text-xs text-muted-foreground">R$ {item.price.toFixed(2)} un</span>
+                                    <span className="font-medium text-sm">{item.product.name}</span>
+                                    <span className="text-xs text-muted-foreground">R$ {item.product.price.toFixed(2)} un</span>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-2 bg-white dark:bg-gray-800 rounded-md border px-1">
-                                        <button onClick={() => updateQuantity(item.productId, -1)} className="p-1 hover:text-red-500"><Minus className="w-3 h-3" /></button>
+                                        <button onClick={() => updateQuantity(item.product.id, -1)} className="p-1 hover:text-red-500"><Minus className="w-3 h-3" /></button>
                                         <span className="text-sm font-mono w-4 text-center">{item.quantity}</span>
-                                        <button onClick={() => updateQuantity(item.productId, 1)} className="p-1 hover:text-green-500"><Plus className="w-3 h-3" /></button>
+                                        <button onClick={() => updateQuantity(item.product.id, 1)} className="p-1 hover:text-green-500"><Plus className="w-3 h-3" /></button>
                                     </div>
                                     <div className="flex flex-col items-end">
                                         <span className="font-bold text-sm min-w-[60px] text-right">
-                                            R$ {(item.price * item.quantity).toFixed(2)}
+                                            R$ {(item.product.price * item.quantity).toFixed(2)}
                                         </span>
-                                        <button onClick={() => updateQuantity(item.productId, -item.quantity)} className="text-xs text-red-400 hover:text-red-600 flex items-center gap-1 mt-1">
+                                        <button onClick={() => updateQuantity(item.product.id, -item.quantity)} className="text-xs text-red-400 hover:text-red-600 flex items-center gap-1 mt-1">
                                             <Trash2 className="w-3 h-3" /> Remover
                                         </button>
                                     </div>

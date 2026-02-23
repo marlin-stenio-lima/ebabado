@@ -16,7 +16,7 @@ import { productService } from "@/lib/services/product-service";
 import { Product, Category } from "@/types";
 
 export default function ProductsPage() {
-    const [products, setProducts] = useState<(Product & { categories: Category | null })[]>([]);
+    const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");

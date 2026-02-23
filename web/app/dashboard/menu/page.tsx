@@ -9,7 +9,7 @@ import { Copy, Download, ExternalLink, QrCode as QrIcon } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import Link from "next/link";
 import { productService } from "@/lib/services/product-service";
-import { Product } from "@/types";
+import { Product, Category } from "@/types";
 
 export default function MenuSettingsPage() {
     const [products, setProducts] = useState<Product[]>([]);
@@ -135,7 +135,7 @@ export default function MenuSettingsPage() {
                                     <Link href="/dashboard/products" className="text-primary underline">Cadastre produtos aqui</Link>.
                                 </div>
                             ) : (
-                                products.map((product) => (
+                                products.map((product: Product) => (
                                     <div key={product.id} className="flex items-center gap-3 bg-card p-3 rounded-md border shadow-sm">
                                         <div className="h-12 w-12 rounded-md bg-muted overflow-hidden shrink-0">
                                             {product.image_url ? (
@@ -147,7 +147,7 @@ export default function MenuSettingsPage() {
                                         <div className="flex-1 min-w-0">
                                             <p className="font-medium text-sm truncate">{product.name}</p>
                                             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                                <span>{product.categories?.name}</span>
+                                                <span>{product.categories?.name || "Sem categoria"}</span>
                                                 <span>•</span>
                                                 <span className="font-semibold text-primary">R$ {product.price.toFixed(2)}</span>
                                                 <span>•</span>

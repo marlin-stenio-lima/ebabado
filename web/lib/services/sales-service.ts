@@ -41,11 +41,11 @@ export const salesService = {
         // 2. Create Sale Items
         const saleItems = cart.map(item => ({
             sale_id: sale.id,
-            product_id: item.productId,
-            product_name: item.name,
+            product_id: item.product.id,
+            product_name: item.product.name,
             quantity: item.quantity,
-            unit_price: item.price,
-            total_price: item.price * item.quantity
+            unit_price: item.product.price,
+            total_price: item.product.price * item.quantity
         }));
 
         const { error: itemsError } = await supabase
@@ -90,5 +90,33 @@ export const salesService = {
             orderCount,
             avgTicket
         };
+    },
+
+    async getDailyPerformance() {
+        const today = new Date().toISOString().split('T')[0];
+
+        const { data: sales, error } = await supabase
+            .from("sales")
+            .select("total_amount, created_at")
+            .gte("created_at", `${today}T00:00:00.000Z`)
+            .lte("created_at", `${today}T23:59:59.999Z`)
+            .order("created_at", { ascending: true });
+
+        if (error) throw error;
+
+        // Group by hour
+        const performanceMap: Record<number, number> = {};
+        // Initialize all hours
+        for (let i = 0; i < 24; i++) performanceMap[i] = 0;
+
+        sales.forEach(sale => {
+            const hour = new Date(sale.created_at).getHours();
+            performanceMap[hour] = (performanceMap[hour] || 0) + sale.total_amount;
+        });
+
+        return Object.entries(performanceMap).map(([hour, total]) => ({
+            hour: `${String(hour).padStart(2, '0')}:00`,
+            total
+        }));
     }
 };
