@@ -1,6 +1,6 @@
 
 import { createClient } from "@/lib/supabase/client";
-import { Product, Category, ProductWithCategory } from "@/types";
+import { Product, Category, ProductWithCategory } from "../../types";
 
 const supabase = createClient();
 
