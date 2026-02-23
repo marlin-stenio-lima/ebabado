@@ -7,8 +7,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard, ShoppingCart, Package, Settings, UtensilsCrossed, LogOut, Menu } from "lucide-react";
 import { useState } from "react";
-
-
+// Build Fix Trigger: Eliminating unused Sheet import definitively.
 const MENU_ITEMS = [
     { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
     { name: "Produtos", icon: Package, href: "/dashboard/products" },
