@@ -5,11 +5,10 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Lock, Mail, Loader2, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { createClient } from "@/lib/supabase/client";
+import { supabase } from "@/lib/supabase/client";
 
 export default function Login() {
     const navigate = useNavigate();
-    const supabase = createClient();
 
     const [email, setEmail] = useState("ebabado@sistema.com");
     const [password, setPassword] = useState("");
