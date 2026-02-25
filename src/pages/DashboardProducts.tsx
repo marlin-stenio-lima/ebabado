@@ -17,6 +17,7 @@ export default function DashboardProducts() {
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [newName, setNewName] = useState("");
     const [newPrice, setNewPrice] = useState("");
@@ -44,15 +45,51 @@ export default function DashboardProducts() {
         if (file) { setSelectedImage(file); setPreviewUrl(URL.createObjectURL(file)); }
     };
 
+    function openCreateDialog() {
+        setEditingProduct(null);
+        setNewName("");
+        setNewPrice("");
+        setNewStock("");
+        setNewCategoryId("");
+        setSelectedImage(null);
+        setPreviewUrl(null);
+        setIsDialogOpen(true);
+    }
+
+    function openEditDialog(product: Product) {
+        setEditingProduct(product);
+        setNewName(product.name);
+        setNewPrice(product.price.toString());
+        setNewStock(product.stock.toString());
+        setNewCategoryId(product.category_id);
+        setSelectedImage(null);
+        setPreviewUrl(product.image_url || null);
+        setIsDialogOpen(true);
+    }
+
     async function handleSave() {
         if (!newName || !newPrice || !newCategoryId) { alert("Preencha todos os campos obrigatórios"); return; }
         try {
             setSaving(true);
-            let imageUrl = null;
+            let imageUrl = previewUrl;
             if (selectedImage) imageUrl = await productService.uploadImage(selectedImage);
-            await productService.createProduct({ name: newName, price: parseFloat(newPrice), stock: parseInt(newStock) || 0, category_id: newCategoryId, image_url: imageUrl, active: true });
+
+            const productData = {
+                name: newName,
+                price: parseFloat(newPrice),
+                stock: parseInt(newStock) || 0,
+                category_id: newCategoryId,
+                image_url: imageUrl,
+                active: true
+            };
+
+            if (editingProduct) {
+                await productService.updateProduct(editingProduct.id, productData);
+            } else {
+                await productService.createProduct(productData);
+            }
+
             setIsDialogOpen(false);
-            setNewName(""); setNewPrice(""); setNewStock(""); setNewCategoryId(""); setSelectedImage(null); setPreviewUrl(null);
             loadData();
         } catch (error) { console.error("Error saving product:", error); alert("Erro ao salvar produto."); }
         finally { setSaving(false); }
@@ -65,6 +102,14 @@ export default function DashboardProducts() {
         } catch (error) { console.error("Error toggling active status:", error); alert("Erro ao atualizar status do produto."); }
     }
 
+    async function handleDelete(id: string) {
+        if (!confirm("Tem certeza que deseja excluir este produto?")) return;
+        try {
+            await productService.deleteProduct(id);
+            setProducts(products.filter(p => p.id !== id));
+        } catch (error) { console.error("Error deleting product:", error); alert("Erro ao excluir produto."); }
+    }
+
     const filteredProducts = products.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
     return (
@@ -74,9 +119,9 @@ export default function DashboardProducts() {
                 <div className="flex gap-4">
                     <div className="relative w-64"><Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" /><Input placeholder="Buscar produto..." className="pl-8" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} /></div>
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                        <DialogTrigger asChild><Button className="gap-2"><Plus className="h-4 w-4" /> Novo Produto</Button></DialogTrigger>
+                        <DialogTrigger asChild><Button onClick={openCreateDialog} className="gap-2"><Plus className="h-4 w-4" /> Novo Produto</Button></DialogTrigger>
                         <DialogContent className="sm:max-w-[500px]">
-                            <DialogHeader><DialogTitle>Adicionar Novo Produto</DialogTitle><DialogDescription>Preencha os detalhes do produto e adicione uma imagem.</DialogDescription></DialogHeader>
+                            <DialogHeader><DialogTitle>{editingProduct ? "Editar Produto" : "Adicionar Novo Produto"}</DialogTitle><DialogDescription>{editingProduct ? "Altere as informações do produto abaixo." : "Preencha os detalhes do produto e adicione uma imagem."}</DialogDescription></DialogHeader>
                             <div className="grid gap-4 py-4">
                                 <div className="flex flex-col items-center justify-center gap-4 mb-4">
                                     <div className="relative flex h-32 w-32 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-muted-foreground/25 bg-muted/50 hover:bg-muted transition-colors overflow-hidden" onClick={() => fileInputRef.current?.click()}>
@@ -86,6 +131,7 @@ export default function DashboardProducts() {
                                 </div>
                                 <div className="grid grid-cols-4 items-center gap-4"><Label htmlFor="name" className="text-right">Nome</Label><Input id="name" value={newName} onChange={e => setNewName(e.target.value)} className="col-span-3" placeholder="Ex: Cerveja Heineken" /></div>
                                 <div className="grid grid-cols-4 items-center gap-4"><Label htmlFor="price" className="text-right">Preço</Label><Input id="price" type="number" value={newPrice} onChange={e => setNewPrice(e.target.value)} className="col-span-3" placeholder="0.00" /></div>
+                                <div className="grid grid-cols-4 items-center gap-4"><Label htmlFor="stock" className="text-right">Estoque</Label><Input id="stock" type="number" value={newStock} onChange={e => setNewStock(e.target.value)} className="col-span-3" placeholder="0" /></div>
                                 <div className="grid grid-cols-4 items-center gap-4">
                                     <Label htmlFor="category" className="text-right">Categoria</Label>
                                     <Select onValueChange={setNewCategoryId} value={newCategoryId}><SelectTrigger className="col-span-3"><SelectValue placeholder="Selecione a categoria" /></SelectTrigger><SelectContent>{categories.map(cat => <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>)}</SelectContent></Select>
@@ -114,7 +160,7 @@ export default function DashboardProducts() {
                                     <TableCell>R$ {product.price.toFixed(2)}</TableCell>
                                     <TableCell><span className={`font-mono ${product.stock <= 5 ? 'text-red-500 font-bold' : ''}`}>{product.stock}</span></TableCell>
                                     <TableCell><div className="flex items-center gap-2"><Switch checked={product.active} onCheckedChange={() => toggleActive(product)} /><span className="text-sm text-muted-foreground">{product.active ? 'Ativo' : 'Inativo'}</span></div></TableCell>
-                                    <TableCell className="text-right"><Button variant="ghost" size="icon"><Edit className="h-4 w-4" /></Button><Button variant="ghost" size="icon" className="text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></TableCell>
+                                    <TableCell className="text-right"><Button variant="ghost" size="icon" onClick={() => openEditDialog(product)}><Edit className="h-4 w-4" /></Button><Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => handleDelete(product.id)}><Trash2 className="h-4 w-4" /></Button></TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
