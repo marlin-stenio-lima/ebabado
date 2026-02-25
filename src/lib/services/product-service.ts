@@ -39,6 +39,13 @@ export const productService = {
         if (error) throw error;
         return data as Product;
     },
+    async deleteProduct(id: string) {
+        const { error } = await supabase
+            .from("products")
+            .delete()
+            .eq("id", id);
+        if (error) throw error;
+    },
     async decrementStock(productId: string, quantity: number) {
         const { error } = await supabase
             .rpc('decrement_stock', { product_id: productId, quantity });
