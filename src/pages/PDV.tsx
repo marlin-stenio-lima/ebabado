@@ -51,15 +51,24 @@ export default function PDV() {
     };
 
     const updateQuantity = (productId: string, delta: number) => {
-        setCart(prev => prev.map(item => {
-            if (item.product.id === productId) {
-                const product = products.find(p => p.id === productId);
-                const newQty = item.quantity + delta;
-                if (product && delta > 0 && newQty > product.stock) { alert("Estoque insuficiente!"); return item; }
-                return { ...item, quantity: newQty };
-            }
-            return item;
-        }).filter(item => item.quantity > 0));
+        setCart(prev => {
+            return prev.map(item => {
+                if (item.product.id === productId) {
+                    const product = products.find(p => p.id === productId);
+                    const newQty = item.quantity + delta;
+                    if (product && delta > 0 && newQty > product.stock) {
+                        alert("Estoque insuficiente!");
+                        return item;
+                    }
+                    return { ...item, quantity: newQty };
+                }
+                return item;
+            }).filter(item => item.quantity > 0);
+        });
+    };
+
+    const removeFromCart = (productId: string) => {
+        setCart(prev => prev.filter(item => item.product.id !== productId));
     };
 
     const clearCart = () => setCart([]);
@@ -145,13 +154,22 @@ export default function PDV() {
                             <div className="flex flex-col"><span className="font-medium text-sm">{item.product.name}</span><span className="text-xs text-muted-foreground">R$ {item.product.price.toFixed(2)} un</span></div>
                             <div className="flex items-center gap-3">
                                 <div className="flex items-center gap-2 bg-white dark:bg-gray-800 rounded-md border px-1">
-                                    <button onClick={() => updateQuantity(item.product.id, -1)} className="p-1 hover:text-red-500"><Minus className="w-3 h-3" /></button>
+                                    <button type="button" onClick={() => updateQuantity(item.product.id, -1)} className="p-1 hover:text-red-500 transition-colors"><Minus className="w-3 h-3" /></button>
                                     <span className="text-sm font-mono w-4 text-center">{item.quantity}</span>
-                                    <button onClick={() => updateQuantity(item.product.id, 1)} className="p-1 hover:text-green-500"><Plus className="w-3 h-3" /></button>
+                                    <button type="button" onClick={() => updateQuantity(item.product.id, 1)} className="p-1 hover:text-green-500 transition-colors"><Plus className="w-3 h-3" /></button>
                                 </div>
                                 <div className="flex flex-col items-end">
                                     <span className="font-bold text-sm min-w-[60px] text-right">R$ {(item.product.price * item.quantity).toFixed(2)}</span>
-                                    <button onClick={() => updateQuantity(item.product.id, -item.quantity)} className="text-xs text-red-400 hover:text-red-600 flex items-center gap-1 mt-1"><Trash2 className="w-3 h-3" /> Remover</button>
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            removeFromCart(item.product.id);
+                                        }}
+                                        className="text-xs text-red-500 hover:text-red-700 flex items-center gap-1 mt-1 transition-all hover:scale-105"
+                                    >
+                                        <Trash2 className="w-3 h-3" /> Remover
+                                    </button>
                                 </div>
                             </div>
                         </div>

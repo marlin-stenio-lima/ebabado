@@ -77,14 +77,6 @@ export default function DashboardSales() {
                     <h1 className="text-xl font-bold">Histórico de Vendas</h1>
                     <p className="text-sm text-muted-foreground">Consulte e filtre todas as transações realizadas</p>
                 </div>
-                <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={clearFilters} className="gap-2">
-                        <FilterX className="h-4 w-4" /> Limpar Filtros
-                    </Button>
-                    <Button size="sm" onClick={loadSales} className="gap-2">
-                        <Search className="h-4 w-4" /> Aplicar Filtros
-                    </Button>
-                </div>
             </header>
 
             <div className="flex flex-1 overflow-hidden">
@@ -98,7 +90,7 @@ export default function DashboardSales() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="pt-6">
-                            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-medium text-muted-foreground">Início</label>
                                     <Input type="date" value={filters.startDate} onChange={e => setFilters({ ...filters, startDate: e.target.value })} />
@@ -122,16 +114,13 @@ export default function DashboardSales() {
                                         </SelectContent>
                                     </Select>
                                 </div>
-                                <div className="space-y-1.5">
-                                    <label className="text-xs font-medium text-muted-foreground">Valor Mínimo</label>
-                                    <Input type="number" placeholder="R$ 0.00" value={filters.minAmount} onChange={e => setFilters({ ...filters, minAmount: e.target.value })} />
-                                </div>
-                                <div className="space-y-1.5">
-                                    <label className="text-xs font-medium text-muted-foreground">Busca por ID</label>
-                                    <div className="relative">
-                                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                                        <Input placeholder="ID da venda..." className="pl-8" value={filters.searchTerm} onChange={e => setFilters({ ...filters, searchTerm: e.target.value })} />
-                                    </div>
+                                <div className="flex items-end gap-2">
+                                    <Button variant="outline" size="sm" onClick={clearFilters} className="flex-1 gap-2 h-10">
+                                        <FilterX className="h-4 w-4" /> Limpar
+                                    </Button>
+                                    <Button size="sm" onClick={loadSales} className="flex-1 gap-2 h-10">
+                                        <Search className="h-4 w-4" /> Aplicar
+                                    </Button>
                                 </div>
                             </div>
                         </CardContent>
@@ -243,14 +232,6 @@ export default function DashboardSales() {
                                 <p className="text-xs text-muted-foreground text-center py-4">Sem dados</p>
                             )}
                         </div>
-                    </div>
-
-                    <div className="pt-6 border-t">
-                        <Button className="w-full gap-2" variant="outline" size="sm" asChild>
-                            <a href="/" target="_blank" rel="noopener noreferrer">
-                                Ver Site Público <ArrowRight className="h-4 w-4" />
-                            </a>
-                        </Button>
                     </div>
                 </aside>
             </div>
