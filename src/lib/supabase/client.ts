@@ -1,7 +1,15 @@
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 
-export const createClient = () =>
-  createSupabaseClient(
-    import.meta.env.VITE_SUPABASE_URL!,
-    import.meta.env.VITE_SUPABASE_ANON_KEY!
-  )
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
+
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+  console.warn('Supabase credentials not found in environment variables')
+}
+
+export const supabase = createSupabaseClient(
+  SUPABASE_URL || '',
+  SUPABASE_KEY || ''
+)
+
+export const createClient = () => supabase
