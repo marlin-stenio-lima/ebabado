@@ -49,7 +49,7 @@ export default function Menu() {
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold uppercase tracking-widest mb-4">
                         <ShoppingBag className="w-3 h-3" /> Bem-vindo ao
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black text-white mb-3 tracking-tight">Bloquinho ebabado</h1>
+                    <h1 className="text-4xl md:text-5xl font-black text-white mb-3 tracking-tight">Bloquinho é babado</h1>
                     <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-white/90">
                         <span className="flex items-center gap-1.5 bg-black/20 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-white/10">
                             <MapPin className="w-3.5 h-3.5 text-primary" /> Balcão Principal
@@ -175,7 +175,7 @@ export default function Menu() {
             {/* Bottom Bar Info */}
             <footer className="mt-8 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 py-10 px-6 text-center animate-in fade-in slide-in-from-bottom-2 duration-700">
                 <div className="max-w-4xl mx-auto space-y-4">
-                    <p className="text-sm font-black text-zinc-900 dark:text-white uppercase tracking-widest opacity-80">Bloquinho ebabado</p>
+                    <p className="text-sm font-black text-zinc-900 dark:text-white uppercase tracking-widest opacity-80">Bloquinho é babado</p>
                     <p className="text-xs text-zinc-400 font-medium">© 2026 • Cardápio Digital Premium • Todos os direitos reservados</p>
                     <div className="flex items-center justify-center gap-6 pt-4 grayscale opacity-40">
                         <div className="w-1 h-1 rounded-full bg-zinc-400" />

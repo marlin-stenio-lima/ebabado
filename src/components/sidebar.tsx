@@ -20,7 +20,7 @@ export function Sidebar() {
         <div className="flex h-full min-h-screen w-64 flex-col border-r bg-card text-card-foreground">
             <div className="flex h-14 items-center border-b px-6">
                 <Link to="/dashboard" className="flex items-center gap-2 font-semibold">
-                    <span>Bloquinho ebabado</span>
+                    <span>Bloquinho é babado</span>
                 </Link>
             </div>
             <div className="flex-1 overflow-auto py-4">

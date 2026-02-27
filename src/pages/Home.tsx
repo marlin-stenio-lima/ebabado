@@ -67,7 +67,7 @@ export default function Home() {
             </main>
 
             <footer className="relative z-10 py-8 text-center text-white/40 text-sm">
-                <p>© 2026 Bloquinho ebabado. Todos os direitos reservados.</p>
+                <p>© 2026 Bloquinho é babado. Todos os direitos reservados.</p>
                 <p className="mt-2">Developed with 💜 by Antigravity</p>
             </footer>
         </div>

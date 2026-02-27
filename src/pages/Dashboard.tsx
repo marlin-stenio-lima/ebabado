@@ -30,7 +30,7 @@ export default function Dashboard() {
         <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-gray-900">
             <header className="sticky top-0 z-10 border-b bg-background px-6 py-4 flex items-center justify-between shadow-sm">
                 <div>
-                    <h1 className="text-xl font-bold">Bloquinho ebabado <span className="text-primary font-light">Admin</span></h1>
+                    <h1 className="text-xl font-bold">Bloquinho é babado <span className="text-primary font-light">Admin</span></h1>
                     <p className="text-xs text-muted-foreground">Visão geral do dia</p>
                 </div>
                 <div className="flex gap-4">

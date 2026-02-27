@@ -41,7 +41,7 @@ export default function Login() {
         <div className="flex h-screen w-full items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
             <Card className="w-full max-w-md">
                 <CardHeader className="space-y-1">
-                    <CardTitle className="text-2xl font-bold text-center">Bloquinho ebabado</CardTitle>
+                    <CardTitle className="text-2xl font-bold text-center">Bloquinho é babado</CardTitle>
                     <CardDescription className="text-center">Sistema de Gestão de Eventos e PDV</CardDescription>
                 </CardHeader>
                 <CardContent>
