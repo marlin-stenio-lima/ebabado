@@ -7,6 +7,7 @@ import { Outlet } from "react-router-dom";
 const MENU_ITEMS = [
     { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
     { name: "Produtos", icon: Package, href: "/dashboard/products" },
+    { name: "Vendas", icon: ShoppingCart, href: "/dashboard/sales" },
     { name: "PDV / Balcão", icon: ShoppingCart, href: "/pdv" },
     { name: "Cardápio Digital", icon: UtensilsCrossed, href: "/dashboard/menu" },
     { name: "Configurações", icon: Settings, href: "/dashboard/settings" },
@@ -19,7 +20,6 @@ export function Sidebar() {
         <div className="flex h-full min-h-screen w-64 flex-col border-r bg-card text-card-foreground">
             <div className="flex h-14 items-center border-b px-6">
                 <Link to="/dashboard" className="flex items-center gap-2 font-semibold">
-                    <UtensilsCrossed className="h-6 w-6" />
                     <span>Bloquinho ebabado</span>
                 </Link>
             </div>
@@ -43,7 +43,13 @@ export function Sidebar() {
                     })}
                 </nav>
             </div>
-            <div className="mt-auto border-t p-4">
+            <div className="mt-auto border-t p-4 space-y-2">
+                <Button variant="outline" className="w-full justify-start gap-2 border-primary/20 hover:bg-primary/5 hover:text-primary transition-all text-xs" asChild>
+                    <a href="/" target="_blank" rel="noopener noreferrer">
+                        <ShoppingCart className="h-4 w-4" />
+                        Ver Site Público
+                    </a>
+                </Button>
                 <Button variant="ghost" className="w-full justify-start gap-2 text-muted-foreground hover:text-destructive">
                     <LogOut className="h-4 w-4" />
                     Sair
@@ -57,7 +63,6 @@ export function MobileHeader() {
     return (
         <header className="flex h-14 lg:hidden items-center gap-4 border-b bg-muted/40 px-6">
             <div className="flex items-center gap-2 font-semibold">
-                <UtensilsCrossed className="h-6 w-6" />
                 <span>Bloquinho ebabado</span>
             </div>
         </header>

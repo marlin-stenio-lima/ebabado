@@ -56,10 +56,10 @@ export default function PDV() {
                 const product = products.find(p => p.id === productId);
                 const newQty = item.quantity + delta;
                 if (product && delta > 0 && newQty > product.stock) { alert("Estoque insuficiente!"); return item; }
-                return newQty > 0 ? { ...item, quantity: newQty } : item;
+                return { ...item, quantity: newQty };
             }
             return item;
-        }));
+        }).filter(item => item.quantity > 0));
     };
 
     const clearCart = () => setCart([]);

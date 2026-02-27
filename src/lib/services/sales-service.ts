@@ -73,5 +73,18 @@ export const salesService = {
             hour: `${String(hour).padStart(2, '0')}:00`,
             total
         }));
+    },
+    async getSalesWithFilters(filters: { startDate?: string; endDate?: string; paymentMethod?: string; minAmount?: number; maxAmount?: number }) {
+        let query = supabase.from("sales").select("*").order("created_at", { ascending: false });
+
+        if (filters.startDate) query = query.gte("created_at", `${filters.startDate}T00:00:00.000Z`);
+        if (filters.endDate) query = query.lte("created_at", `${filters.endDate}T23:59:59.999Z`);
+        if (filters.paymentMethod && filters.paymentMethod !== "all") query = query.eq("payment_method", filters.paymentMethod);
+        if (filters.minAmount) query = query.gte("total_amount", filters.minAmount);
+        if (filters.maxAmount) query = query.lte("total_amount", filters.maxAmount);
+
+        const { data, error } = await query;
+        if (error) throw error;
+        return data as Sale[];
     }
 };

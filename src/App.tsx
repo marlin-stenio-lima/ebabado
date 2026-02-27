@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import DashboardProducts from "./pages/DashboardProducts";
 import DashboardMenu from "./pages/DashboardMenu";
 import DashboardSettings from "./pages/DashboardSettings";
+import DashboardSales from "./pages/DashboardSales";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
       <Route path="/dashboard" element={<DashboardLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="products" element={<DashboardProducts />} />
+        <Route path="sales" element={<DashboardSales />} />
         <Route path="menu" element={<DashboardMenu />} />
         <Route path="settings" element={<DashboardSettings />} />
       </Route>
