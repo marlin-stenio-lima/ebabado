@@ -86,5 +86,14 @@ export const salesService = {
         const { data, error } = await query;
         if (error) throw error;
         return data as Sale[];
+    },
+    async deleteSale(id: string) {
+        // Dependencies are handled by Supabase cascade or by deleting sale_items first
+        const { error: itemsError } = await supabase.from("sale_items").delete().eq("sale_id", id);
+        if (itemsError) throw itemsError;
+
+        const { error } = await supabase.from("sales").delete().eq("id", id);
+        if (error) throw error;
+        return true;
     }
 };

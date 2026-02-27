@@ -4,12 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Calendar, FilterX, Loader2, DollarSign, ShoppingBag, Receipt, ArrowRight } from "lucide-react";
+import { Search, Calendar, FilterX, Loader2, DollarSign, ShoppingBag, Receipt, ArrowRight, Trash2 } from "lucide-react";
 import { salesService, Sale } from "@/lib/services/sales-service";
 
 export default function DashboardSales() {
     const [sales, setSales] = useState<Sale[]>([]);
     const [loading, setLoading] = useState(true);
+    const [deletingId, setDeletingId] = useState<string | null>(null);
     const [filters, setFilters] = useState({
         startDate: "",
         endDate: "",
@@ -38,6 +39,30 @@ export default function DashboardSales() {
             setLoading(false);
         }
     }
+
+    const handleDelete = async (id: string) => {
+        const password = prompt("Para excluir esta venda, digite a senha de acesso:");
+        if (!password) return;
+
+        if (password !== "Senha@1234") {
+            alert("Senha incorreta! A exclusão foi cancelada.");
+            return;
+        }
+
+        if (!confirm("Tem certeza que deseja excluir permanentemente esta venda?")) return;
+
+        try {
+            setDeletingId(id);
+            await salesService.deleteSale(id);
+            alert("Venda excluída com sucesso!");
+            loadSales();
+        } catch (error) {
+            console.error("Error deleting sale:", error);
+            alert("Erro ao excluir venda. Tente novamente.");
+        } finally {
+            setDeletingId(null);
+        }
+    };
 
     const filteredSales = useMemo(() => {
         return sales.filter(sale =>
@@ -90,7 +115,7 @@ export default function DashboardSales() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="pt-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-medium text-muted-foreground">Início</label>
                                     <Input type="date" value={filters.startDate} onChange={e => setFilters({ ...filters, startDate: e.target.value })} />
@@ -114,14 +139,12 @@ export default function DashboardSales() {
                                         </SelectContent>
                                     </Select>
                                 </div>
-                                <div className="flex items-end gap-2">
-                                    <Button variant="outline" size="sm" onClick={clearFilters} className="flex-1 gap-2 h-10">
-                                        <FilterX className="h-4 w-4" /> Limpar
-                                    </Button>
-                                    <Button size="sm" onClick={loadSales} className="flex-1 gap-2 h-10">
-                                        <Search className="h-4 w-4" /> Aplicar
-                                    </Button>
-                                </div>
+                                <Button variant="outline" size="sm" onClick={clearFilters} className="gap-2 h-10 w-full">
+                                    <FilterX className="h-4 w-4" /> Limpar
+                                </Button>
+                                <Button size="sm" onClick={loadSales} className="gap-2 h-10 w-full">
+                                    <Search className="h-4 w-4" /> Aplicar
+                                </Button>
                             </div>
                         </CardContent>
                     </Card>
@@ -136,12 +159,13 @@ export default function DashboardSales() {
                                         <TableHead>ID da Venda</TableHead>
                                         <TableHead>Método</TableHead>
                                         <TableHead className="text-right">Valor Total</TableHead>
+                                        <TableHead className="w-10"></TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {loading ? (
                                         <TableRow>
-                                            <TableCell colSpan={4} className="h-48 text-center text-muted-foreground">
+                                            <TableCell colSpan={5} className="h-48 text-center text-muted-foreground">
                                                 <div className="flex flex-col items-center gap-2">
                                                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
                                                     <p>Buscando vendas...</p>
@@ -150,7 +174,7 @@ export default function DashboardSales() {
                                         </TableRow>
                                     ) : filteredSales.length === 0 ? (
                                         <TableRow>
-                                            <TableCell colSpan={4} className="h-48 text-center text-muted-foreground">
+                                            <TableCell colSpan={5} className="h-48 text-center text-muted-foreground">
                                                 Nenhuma venda encontrada para os filtros aplicados.
                                             </TableCell>
                                         </TableRow>
@@ -172,6 +196,21 @@ export default function DashboardSales() {
                                             </TableCell>
                                             <TableCell className="text-right font-bold text-emerald-600">
                                                 R$ {sale.total_amount.toFixed(2)}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                                                    onClick={() => handleDelete(sale.id)}
+                                                    disabled={deletingId === sale.id}
+                                                >
+                                                    {deletingId === sale.id ? (
+                                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                                    ) : (
+                                                        <Trash2 className="h-4 w-4" />
+                                                    )}
+                                                </Button>
                                             </TableCell>
                                         </TableRow>
                                     ))}
