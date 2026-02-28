@@ -109,12 +109,12 @@ export default function PDV() {
                     <div className="text-sm text-muted-foreground">Caixa Aberto • Operador: Admin</div>
                 </header>
 
-                <Tabs defaultValue="Todos" className="w-full flex-1 flex flex-col" onValueChange={setSelectedCategory}>
+                <Tabs defaultValue="Todos" className="w-full flex-1 flex flex-col min-h-0" onValueChange={setSelectedCategory}>
                     <TabsList className="w-full justify-start h-12 p-1 bg-white dark:bg-gray-800 rounded-lg shadow-sm mb-4 overflow-x-auto">
                         <TabsTrigger value="Todos" className="px-6 py-2">Todos</TabsTrigger>
                         {categories.map(cat => <TabsTrigger key={cat.id} value={cat.name} className="px-6 py-2 text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md transition-all">{cat.name}</TabsTrigger>)}
                     </TabsList>
-                    <div className="flex-1 overflow-y-auto pr-2 pb-20">
+                    <div className="flex-1 overflow-y-auto pr-2 pb-20 min-h-0">
                         <div className={`grid gap-4 transition-all duration-300 ${isCartOpen ? "grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"}`}>
                             {filteredProducts.map(product => (
                                 <Card key={product.id} className="cursor-pointer hover:shadow-lg transition-all active:scale-95 border-none shadow-sm overflow-hidden group" onClick={() => addToCart(product)}>
