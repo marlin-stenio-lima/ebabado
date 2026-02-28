@@ -3,12 +3,23 @@ import { CartItem } from "@/types";
 
 const supabase = createClient();
 
+export type SaleItem = {
+    id: string;
+    sale_id: string;
+    product_id: string;
+    product_name: string;
+    quantity: number;
+    unit_price: number;
+    total_price: number;
+};
+
 export type Sale = {
     id: string;
     created_at: string;
     total_amount: number;
     payment_method: string;
     status: string;
+    sale_items?: SaleItem[];
 };
 
 export const salesService = {
@@ -75,7 +86,7 @@ export const salesService = {
         }));
     },
     async getSalesWithFilters(filters: { startDate?: string; endDate?: string; paymentMethod?: string; minAmount?: number; maxAmount?: number }) {
-        let query = supabase.from("sales").select("*").order("created_at", { ascending: false });
+        let query = supabase.from("sales").select("*, sale_items(*)").order("created_at", { ascending: false });
 
         if (filters.startDate) query = query.gte("created_at", `${filters.startDate}T00:00:00.000Z`);
         if (filters.endDate) query = query.lte("created_at", `${filters.endDate}T23:59:59.999Z`);

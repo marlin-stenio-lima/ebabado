@@ -65,9 +65,13 @@ export default function DashboardSales() {
     };
 
     const filteredSales = useMemo(() => {
-        return sales.filter(sale =>
-            sale.id.toLowerCase().includes(filters.searchTerm.toLowerCase())
-        );
+        return sales.filter(sale => {
+            const matchesId = sale.id.toLowerCase().includes(filters.searchTerm.toLowerCase());
+            const matchesProducts = sale.sale_items?.some(item =>
+                item.product_name.toLowerCase().includes(filters.searchTerm.toLowerCase())
+            );
+            return matchesId || matchesProducts;
+        });
     }, [sales, filters.searchTerm]);
 
     const stats = useMemo(() => {
@@ -156,7 +160,7 @@ export default function DashboardSales() {
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>Data / Hora</TableHead>
-                                        <TableHead>ID da Venda</TableHead>
+                                        <TableHead>Produtos</TableHead>
                                         <TableHead>Método</TableHead>
                                         <TableHead className="text-right">Valor Total</TableHead>
                                         <TableHead className="w-10"></TableHead>
@@ -183,8 +187,8 @@ export default function DashboardSales() {
                                             <TableCell className="text-xs">
                                                 {new Date(sale.created_at).toLocaleString('pt-BR')}
                                             </TableCell>
-                                            <TableCell className="font-mono text-xs text-muted-foreground">
-                                                #{sale.id.slice(0, 8)}...
+                                            <TableCell className="text-sm font-medium">
+                                                {sale.sale_items?.map(item => item.product_name).join(", ") || "Sem produtos"}
                                             </TableCell>
                                             <TableCell>
                                                 <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase bg-secondary text-secondary-foreground">
